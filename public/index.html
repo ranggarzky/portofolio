@@ -1,0 +1,1201 @@
+<!DOCTYPE html>
+<html lang="id" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rangga Rizky Saputra - Retro Glass Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="stylesheet" href="/vendor/aos/aos.css">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=VT323&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+
+    <script src="/vendor/aos/aos.js"></script>
+    <script src="/vendor/sweetalert2/sweetalert2.all.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        arcade: {
+                            bg: '#080c14',
+                            card: 'rgba(18, 24, 38, 0.55)',
+                            border: '#ffe600',
+                            cyan: '#00f3ff',
+                            amber: '#ff9900',
+                            yellow: '#ffe600',
+                            green: '#39ff14',
+                            purple: '#1a2332',
+                            grey: '#2b2b2b',
+                            dark_red: '#801818'
+                        }
+                    },
+                    fontFamily: {
+                        pixel: ['"Press Start 2P"', 'monospace'],
+                        terminal: ['"VT323"', 'monospace'],
+                        sans: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* FULL SECTION BACKGROUND STYLING */
+        .section-hero {
+            min-height: 100vh;
+            width: 100%;
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* EFEK KACA REALISTIS (GLASSMORPHISM) */
+        .glass-card-yellow {
+            background: rgba(18, 24, 38, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 230, 0, 0.3);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6), inset 0 0 15px rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-card-grey {
+            background: rgba(18, 24, 38, 0.65);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+        }
+
+        .glass-header {
+            background: rgba(11, 15, 23, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid rgba(255, 230, 0, 0.3);
+        }
+
+        .crt::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 230, 0, 0.01), rgba(0, 255, 0, 0.01), rgba(0, 243, 255, 0.01));
+            z-index: 30;
+            background-size: 100% 3px, 6px 100%;
+            pointer-events: none !important;
+        }
+
+        .text-glow-cyan {
+            text-shadow: 0 0 8px rgba(0, 243, 255, 0.8), 0 0 15px rgba(0, 243, 255, 0.4);
+        }
+
+        .text-glow-yellow {
+            text-shadow: 0 0 8px rgba(255, 230, 0, 0.8), 0 0 15px rgba(255, 230, 0, 0.4);
+        }
+
+        .shutter-panel {
+            transition: transform 0.4s cubic-bezier(0.77, 0, 0.175, 1);
+        }
+
+        .sidebar-closed .shutter-left {
+            transform: translateX(-100%);
+        }
+
+        .arcade-grid {
+            background-size: 40px 40px;
+            background-image:
+                linear-gradient(to right, rgba(255, 230, 0, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(255, 230, 0, 0.03) 1px, transparent 1px);
+        }
+
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #080c14;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #ffe600;
+            border-radius: 4px;
+        }
+
+        .arcade-btn {
+            position: relative;
+            transition: all 0.1s ease;
+            box-shadow: 0 4px 0 #b3a200;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+        }
+
+        .arcade-btn:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #b3a200;
+        }
+
+        /* ANIMASI SMOOTH BUKA-TUTUP ABOUT ME (MENCEGAH BACKGROUND TARIK/REFLOW ANCUR) */
+        .about-desc-collapsed {
+            max-height: 95px; /* Kira-kira tinggi 4 baris teks */
+            overflow: hidden;
+            position: relative;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+
+        .about-desc-expanded {
+            max-height: 500px; /* Cukup besar untuk menampung seluruh paragraf panjang */
+            transition: max-height 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+        }
+
+        #aboutMeText {
+            cursor: pointer;
+            transition: opacity 0.2s ease;
+        }
+
+        #aboutMeText:hover {
+            opacity: 0.85;
+        }
+
+        #minigame {
+            position: relative;
+            padding-bottom: 7em;
+        }
+
+        .cursor-blink {
+            animation: blink 1s infinite;
+        }
+
+        .quest_div {
+            transition: all 0.3s ease;
+            border: rgba(255, 255, 255, 0.1) solid 1px;
+        }
+
+        .quest_div:hover {
+            border: #39ff14 solid 1px;
+        }
+
+        @keyframes blink {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0; }
+        }
+
+        /* ANIMASI SMOOTH BUKA-TUTUP ABOUT ME */
+        .about-desc-wrapper {
+            max-height: 110px; /* Tinggi awal saat tertutup (sekitar 4 baris) */
+            overflow: hidden;
+            transition: max-height 0.5s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+
+        .about-desc-expanded {
+            max-height: 600px; /* Nilai maksimal yang cukup untuk teks panjang */
+        }
+
+        .wave-container {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            overflow: hidden;
+            line-height: 0;
+            pointer-events: none;
+        }
+
+        .wave-container svg {
+            display: block;
+            width: 100%;
+            height: 90px;
+            filter: drop-shadow(0px 10px 25px rgba(0, 0, 0, 1));
+        }
+
+        .footer {
+            display: flex;
+            justify-content: center;
+            gap: 5%;
+        }
+
+        .f-item {
+            display: block;
+            position: relative;
+            border-radius: 12px;
+            transition: all 0.1s ease;
+            background-color: #ffe600;
+            box-shadow: 0 4px 0 #b3a200;
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            color: #000;
+            width: 150px;
+        }
+
+        .f-item:hover {
+            background-color: #e6cf00;
+        }
+
+        .f-item:active {
+            transform: translateY(3px);
+            box-shadow: 0 1px 0 #b3a200;
+        }
+
+        .f-item i {
+            font-size: 2em;
+            padding-bottom: 0.2em;
+        }
+
+        @media (width <= 40rem) {
+            .f-item {
+                width: 50px;
+            }
+
+            .canvas-css {
+                height: 1000px;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-arcade-bg text-gray-200 arcade-grid font-sans min-h-screen overflow-x-hidden selection:bg-arcade-yellow selection:text-black">
+
+    <!-- TOP HEADER -->
+    <header class="fixed top-0 left-0 w-full z-40 glass-header px-4 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <button id="sidebarToggleBtn" type="button" class="arcade-btn bg-arcade-yellow hover:bg-yellow-400 text-black px-3 py-2 rounded font-pixel text-xs flex items-center gap-2 border border-yellow-200 z-50 cursor-pointer font-bold">
+                <i class="fa-solid fa-gamepad text-black text-sm pointer-events-none"></i>
+                <span class="hidden sm:inline pointer-events-none">MENU BIOS</span>
+            </button>
+
+            <div class="font-pixel text-xs text-arcade-cyan flex items-center gap-2 select-none">
+                <span class="inline-block w-2.5 h-2.5 bg-arcade-green rounded-full animate-ping"></span>
+                <span class="text-glow-cyan hidden md:inline">SYSTEM: ONLINE</span>
+            </div>
+        </div>
+
+        <div class="font-pixel text-xs text-arcade-yellow tracking-wider flex items-center gap-4 select-none">
+            <div>HIGH SCORE: <span class="text-white text-glow-yellow" id="globalHighScore">999990</span></div>
+            <div class="hidden sm:block">CREDITS: <span class="text-arcade-green font-bold">99</span></div>
+        </div>
+    </header>
+
+    <!-- SIDEBAR -->
+    <div id="arcadeSidebar" class="fixed inset-0 z-50 sidebar-closed pointer-events-none">
+        <div id="sidebarBackdrop" class="absolute inset-0 bg-black/80 backdrop-blur-sm opacity-0 transition-opacity duration-300 cursor-pointer pointer-events-none"></div>
+
+        <div id="sidebarPanel" class="shutter-panel shutter-left absolute top-0 left-0 h-full w-full max-w-xs sm:max-w-md glass-card-yellow border-r-2 border-arcade-yellow p-6 flex flex-col justify-between shadow-2xl overflow-y-auto pointer-events-none z-50">
+
+            <div>
+                <div class="flex justify-between items-center border-b border-arcade-yellow/40 pb-4 mb-6">
+                    <div class="flex items-center gap-2 select-none">
+                        <i class="fa-solid fa-microchip text-arcade-yellow text-xl"></i>
+                        <h2 class="font-pixel text-sm text-arcade-yellow text-glow-yellow">RANGGA RIZKY's</h2>
+                    </div>
+
+                    <button id="sidebarCloseBtn" type="button" class="text-arcade-yellow hover:text-white text-xl font-bold p-1 cursor-pointer">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+
+                <div class="bg-black/40 rounded-xl p-4 border border-white/10 mb-6 font-terminal text-lg select-none">
+                    <div class="text-arcade-yellow mb-1 font-pixel text-xs">[ DEVICE SPECS ]</div>
+
+                    <div class="flex justify-between text-xs font-pixel py-1 text-gray-300">
+                        <span>CPU:</span>
+                        <span class="text-arcade-green">Ryzen 7 9700X3D (FAKE)</span>
+                    </div>
+
+                    <div class="flex justify-between text-xs font-pixel py-1 text-gray-300">
+                        <span>MEMORY:</span>
+                        <span class="text-arcade-green">32GB (REAL BTW)</span>
+                    </div>
+
+                    <div class="flex justify-between text-xs font-pixel py-1 text-gray-300">
+                        <span>REPOSITORY:</span>
+                        <span class="text-arcade-cyan">RANGGA RIZKY</span>
+                    </div>
+
+                    <div class="flex justify-between text-xs font-pixel py-1 text-gray-300">
+                        <span>AUDIO MODE:</span>
+                        <span class="text-arcade-yellow" id="audioStatus">MUTED</span>
+                    </div>
+                </div>
+
+                <nav class="space-y-3 font-pixel text-xs" id="sidebarNav"></nav>
+            </div>
+
+            <div class="pt-6 border-t border-white/10 mt-6 space-y-3">
+                <button id="toggleAudioBtn" type="button" class="w-full bg-white/5 hover:bg-white/10 border border-arcade-yellow/60 py-2.5 px-3 rounded-lg font-pixel text-xs text-arcade-yellow flex items-center justify-center gap-2 cursor-pointer">
+                    <i class="fa-solid fa-volume-xmark pointer-events-none" id="audioIcon"></i>
+                    <span id="audioBtnText" class="pointer-events-none">CHANGE AUDIO MODE</span>
+                </button>
+
+                <div class="text-center font-terminal text-sm text-gray-400 select-none">
+                    PRESS [ESC] TO CLOSE SYSTEM MENU
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <main class="w-full">
+
+        <!-- SECTION 1: ABOUT / HERO -->
+        <section id="about" class="section-hero px-4 py-24" style="background-image: linear-gradient(to bottom, rgb(38, 34, 93, 0), rgb(38, 34, 93, 0.1)), url('/img/background.jpg'); background-size: cover;">
+            <div class="max-w-6xl w-full mx-auto" data-aos="fade-up">
+                <div class="glass-card-yellow rounded-2xl p-6 md:p-10 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-4 font-pixel text-xs text-arcade-yellow/30 select-none">P1_READY</div>
+
+                    <div class="flex flex-col md:flex-row items-center gap-8 z-10 relative">
+
+                        <div class="relative group">
+                            <div class="absolute -inset-1.5 bg-gradient-to-r from-arcade-yellow via-arcade-amber to-arcade-cyan rounded-full blur opacity-75 group-hover:opacity-100 transition duration-1000 group-hover:duration-500 group-hover:scale-110"></div>
+
+                            <div class="relative w-40 h-40 sm:w-48 sm:h-48 rounded-full overflow-hidden border-2 border-arcade-yellow/80 bg-slate-900 shadow-2xl flex-shrink-0 transition-transform duration-500 group-hover:scale-110">
+                                <img id="profileImg" src="/img/profile.jpeg" alt="Profile" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110">
+                            </div>
+
+                            <div id="playerLevelBadge" class="absolute bottom-1 right-1 bg-arcade-green text-black font-pixel text-[10px] px-2 py-0.5 rounded-full border border-black font-bold">
+                                LVL 99
+                            </div>
+                        </div>
+
+                        <div class="flex-1 text-center md:text-left">
+                            <div id="playerRoleBadge" class="inline-block px-3 py-1 rounded-full bg-white/10 border border-arcade-yellow/50 text-arcade-yellow font-pixel text-xs mb-3"></div>
+
+                            <h1 id="playerName" class="text-3xl sm:text-4xl md:text-5xl font-pixel text-white tracking-wide text-glow-yellow mb-2"></h1>
+
+                            <h2 id="playerSubtitle" class="text-lg sm:text-xl font-terminal text-arcade-cyan tracking-widest uppercase mb-4"></h2>
+
+                            <!-- ABOUT ME MORE / LESS DENGAN INDIKATOR KLIK HALUS -->
+                            <div
+                                id="aboutMeText"
+                                class="about-desc-collapsed about-desc-collapsed bg-black/40 border border-white/10 rounded-xl p-4 mb-2 text-gray-300 font-sans text-sm md:text-base leading-relaxed space-y-2 relative"
+                                role="button"
+                                tabindex="0"
+                                aria-expanded="false"
+                                title="Klik untuk melihat selengkapnya"
+                            ></div>
+                            <div class="text-[11px] font-pixel text-arcade-yellow/70 mb-4 select-none italic text-right" id="aboutToggleHint">
+                                ▼ KLIK TEKS UNTUK BACA SELENGKAPNYA
+                            </div>
+
+                            <div class="bg-black/60 border border-arcade-green/40 rounded-xl p-3 font-terminal text-xl text-arcade-green flex items-center gap-2 shadow-inner">
+                                <span class="text-arcade-yellow font-bold font-pixel text-xs">></span>
+                                <span id="typingText" class="tracking-wide"></span>
+                                <span class="cursor-blink">█</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 2: SKILLS -->
+        <section id="skills" class="section-hero px-4 py-24" style="background: rgb(38, 34, 93);">
+            <div class="max-w-6xl w-full mx-auto">
+                <div class="glass-card-yellow p-6 sm:p-8 rounded-2xl space-y-6">
+                    <div class="border-b border-arcade-green/40 pb-4" data-aos="fade-down">
+                        <h2 id="skillsTitle" class="font-pixel text-2xl text-white text-glow-cyan flex items-center gap-3">
+                            <i class="fa-solid fa-bolt text-arcade-green"></i> SKILLS
+                        </h2>
+                        <p id="skillsDesc" class="font-terminal text-lg text-gray-400"></p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6" id="skillsContainer"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 3: ERROR LOG / EXPERIENCE -->
+        <section id="experience" class="section-hero px-4 py-24" style="background-image: linear-gradient(to bottom, rgb(38, 34, 93, 1), rgba(8,12,20,0)), url('/img/godzilla.png');">
+            <div class="max-w-6xl w-full mx-auto">
+                <div class="glass-card-yellow p-6 sm:p-8 rounded-2xl space-y-6">
+                    <div class="border-b border-arcade-yellow/40 pb-4" data-aos="fade-down">
+                        <h2 class="font-pixel text-2xl text-white text-glow-yellow flex items-center gap-3">
+                            <i class="fa-solid fa-scroll text-arcade-yellow"></i> ERROR LOG
+                        </h2>
+                        <p id="questLogSubtitle" class="font-terminal text-lg text-gray-400"></p>
+                    </div>
+
+                    <div id="questLogContainer" class="space-y-6 relative before:absolute before:inset-0 before:left-4 md:before:left-1/2 before:w-0.5 before:bg-white/10"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- SECTION 4: MINI GAME -->
+        <section id="minigame" class="section-hero px-4 pt-24 pb-32" style="background-image: linear-gradient(to bottom, rgb(37, 0, 82, 1), rgb(255, 255, 255, 0), rgba(8,12,20,1)), url('/img/road.jpeg'); padding-top: -300px;">
+            <div class="max-w-6xl w-full mx-auto" data-aos="zoom-in">
+                <div class="glass-card-yellow p-6 sm:p-8 rounded-2xl space-y-6 py-24">
+                    <div class="border-b border-arcade-yellow/40 pb-4 flex justify-between items-end">
+                        <div>
+                            <h2 class="font-pixel text-2xl text-white text-glow-cyan flex items-center gap-3">
+                                <i class="fa-solid fa-gamepad text-arcade-yellow"></i> ALIEN SHOOTER
+                            </h2>
+                            <p class="font-terminal text-lg text-gray-400">Hancurkan pesawat alien sebanyak-banyaknya!</p>
+                        </div>
+
+                        <div class="font-pixel text-xs text-arcade-yellow hidden sm:block">
+                            BEST: <span id="gameHighScore">0</span>
+                        </div>
+                    </div>
+
+                    <div class="p-4 sm:p-8 rounded-3xl flex flex-col items-center relative overflow-hidden">
+
+                        <div class="w-full max-w-2xl bg-gradient-to-r from-arcade-yellow via-arcade-amber to-arcade-cyan p-2 rounded-t-xl text-center font-pixel text-black text-sm sm:text-base font-extrabold tracking-widest shadow-lg mb-2 flex justify-between px-4 items-center">
+                            <span style="padding-left: 32%;">ARCADE SHOOTER</span>
+                        </div>
+
+                        <div class="w-full max-w-2xl bg-black/90 rounded-b-xl border border-white/20 relative overflow-hidden aspect-[4/5] sm:aspect-[4/3] shadow-inner">
+                            <canvas id="spaceGameCanvas" class="w-full h-full block bg-black relative z-0"></canvas>
+
+                            <div id="gameStartOverlay" class="absolute inset-0 bg-black/90 flex flex-col items-center justify-center p-4 text-center z-20">
+                                <h3 id="overlayTitle" class="font-pixel text-xl sm:text-2xl text-arcade-yellow mb-2 text-glow-yellow">ALIEN INVASION</h3>
+                                <p id="overlaySubtitle" class="font-terminal text-xl text-gray-300 mb-6">PRESS START TO DEFEND EARTH</p>
+
+                                <button id="startGameBtn" type="button" class="arcade-btn bg-arcade-yellow text-black font-pixel text-xs px-8 py-4 rounded-lg font-bold cursor-pointer hover:scale-105 transition">
+                                    START
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="mt-6 w-full max-w-2xl bg-black/40 p-6 rounded-2xl border border-white/10 flex justify-center items-center shadow-2xl relative">
+                            <div class="flex flex-col items-center select-none">
+                                <div class="font-pixel text-[10px] text-arcade-yellow mb-2">ANALOG</div>
+
+                                <div id="joystickBase" class="w-28 h-28 bg-gradient-to-br from-gray-800 to-gray-950 rounded-full border-2 border-white/20 relative flex items-center justify-center shadow-inner cursor-grab active:cursor-grabbing touch-none select-none">
+                                    <div class="absolute inset-2 rounded-full border border-gray-600/40 pointer-events-none"></div>
+
+                                    <div id="joystickStick" class="w-12 h-12 rounded-full bg-gradient-to-tr from-yellow-600 via-arcade-yellow to-amber-300 border-2 border-white shadow-xl transform transition-transform duration-75 flex items-center justify-center pointer-events-none select-none">
+                                        <div class="w-4 h-4 rounded-full bg-white/40"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="wave-container">
+                <svg class="drop-shadow-[0_-10px_15px_rgba(0,0,0,1)]" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 320" preserveAspectRatio="none">
+                    <path fill="#020505" fill-opacity="1" d="M0,160L60,144C120,128,240,96,360,117.3C480,139,600,213,720,218.7C840,224,960,160,1080,149.3C1200,139,1320,181,1380,202.7L1440,224L1440,320L1380,320C1320,320,1200,320,1080,320C960,320,840,320,720,320C600,320,480,320,360,320C240,320,120,320,60,320L0,320Z"></path>
+                </svg>
+            </div>
+        </section>
+
+        <!-- SECTION 5: CONTACT -->
+        <section id="contact" class="section-hero px-4 py-24 -mt-1" style="background: #020505;">
+            <div class="max-w-6xl w-full mx-auto" data-aos="fade-up">
+                <div class="glass-card-yellow p-6 sm:p-8 rounded-2xl space-y-6 max-w-2xl mx-auto">
+                    <div class="border-b border-arcade-yellow/40 pb-4">
+                        <h2 id="contactTitle" class="font-pixel text-2xl text-white text-glow-yellow flex items-center gap-3">
+                            <i class="fa-solid fa-envelope text-arcade-yellow"></i> CONTACT TERMINAL (SOON)
+                        </h2>
+                        <p id="contactDesc" class="font-terminal text-lg text-gray-400"></p>
+                    </div>
+
+                    <form id="contactForm" class="space-y-4">
+                        <div>
+                            <label class="block font-pixel text-xs text-arcade-yellow mb-2">USERNAME</label>
+                            <input type="text" required placeholder="Masukkan Nama Anda..." id="username" maxlength="30"
+                                class="w-full bg-black/50 border border-white/20 rounded-lg p-3 font-sans text-white focus:outline-none focus:border-arcade-yellow">
+                        </div>
+
+                        <div>
+                            <label class="block font-pixel text-xs text-arcade-yellow mb-2">EMAIL ADDRESS</label>
+                            <input type="email" required placeholder="email@domain.com" id="email" maxlength="30"
+                                class="w-full bg-black/50 border border-white/20 rounded-lg p-3 font-sans text-white focus:outline-none focus:border-arcade-yellow">
+                        </div>
+
+                        <div>
+                            <label class="block font-pixel text-xs text-arcade-yellow mb-2">MESSAGE</label>
+                            <textarea rows="4" required placeholder="Tuliskan pesan atau tawaran..." id="message" maxlength="1000"
+                                class="w-full bg-black/50 border border-white/20 rounded-lg p-3 font-sans text-white focus:outline-none focus:border-arcade-yellow"></textarea>
+                        </div>
+
+                        <button type="submit" id="btnSubmitContact" class="w-full arcade-btn bg-arcade-yellow hover:bg-yellow-400 text-black font-pixel text-xs py-4 rounded-lg font-bold tracking-wider flex items-center justify-center gap-2 cursor-pointer">
+                            <i class="fa-solid fa-coins text-sm pointer-events-none"></i> SEND (SOON)
+                        </button>
+                    </form>
+
+                    <div id="formResponse" class="hidden mt-4 p-3 rounded-lg font-pixel text-xs text-center border"></div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer class="glass-header py-6 text-center font-pixel text-xs text-gray-400 space-y-2 relative z-10">
+        <div class="text-[12px] footer pt-3">
+            <a href="" class="link-delayed">
+                <div class="instagram f-item px-2 py-2">
+                    <i class="fa-brands fa-square-instagram"></i>
+                    <p class="hidden pointer-events-none sm:block">Instagram</p>
+                </div>
+            </a>
+            <a href="" class="link-delayed">
+                <div class="discord f-item px-2 py-2">
+                    <i class="fa-brands fa-discord logo"></i>
+                    <p class="hidden pointer-events-none sm:block">Discord</p>
+                </div>
+            </a>
+            <a href="" class="link-delayed">
+                <div class="github f-item px-2 py-2">
+                    <i class="fa-brands fa-github logo"></i>
+                    <p class="hidden pointer-events-none sm:block">Github</p>
+                </div>
+            </a>
+        </div>
+        <div class="text-[8px] pt-10 text-red-50 sm:text-[11px]">Dibuat oleh <span class="text-amber-300">Rangga Rizky Saputra</span> Menggunakan <span class="text-amber-300">Express JS</span></div>
+    </footer>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        AOS.init({ duration: 600, once: true, offset: 100 });
+
+        if(!localStorage.getItem("highScore")){
+            localStorage.setItem("highScore", 0);
+        } else {
+            document.getElementById("gameHighScore").textContent = parseInt(localStorage.getItem("highScore"));
+        }
+
+        const SITE_CONFIG = {
+            profile: {
+                name: "Rangga Rizky Saputra",
+                subtitle: "Full-Stack Developer & Homelab Hobbiest",
+                roleBadge: "PLAYER 1 • CREATOR",
+                levelBadge: "LVL 99",
+                avatarUrl: "/img/profile.jpeg",
+
+                aboutMeParagraphs: [
+                    "Hallo! Saya Rangga Rizky, Saya adalah seorang Full-Stack Developer dan cukup paham tentang Server. Journey saya bermula pada kelas 6 SD, Saat maraknya pandemi di masa itu, Saya memutuskan untuk mencoba membuat server minecraft bernama Frost Network. Pada awalnya saya hanya membuat server itu dan membuat community yang dulu cukup dikenal di komunitas minecraft pe, Tetapi saat menginjak kelas 1 SMP, Saya mulai tertarik dengan Plugin dan Website, Awalnya saya memulai Journey saya dengan membuat Project sederhana seperti Plugin UI Customize, GUI Customize, Front-End Website Hosting Store, Website Server Minecraft saya, dan project lainnya. Sekarang saya adalah Full-Stack Web Developer, Creator Plugin Minecraft, khusus untuk Software Paper, NodeJS Specialist. Kedepannya harapan saya terhadap diri saya yaitu lebih berkembang di bidang Programming dan memelajari lebih banyak Framework dan Coding Languages lainnya."
+                ],
+
+                typingPhrases: [
+                    "Homelab Hobbiest",
+                    "Full-Stack Web Developer",
+                    "NodeJS Specialist",
+                    "I Love NPM",
+                    "Aspiring To Build a Data Center"
+                ]
+            },
+
+            sidebarNav: [
+                { id: "about", label: "01. ABOUT ME", icon: "fa-user", color: "text-arcade-yellow" },
+                { id: "skills", label: "02. SKILLS", icon: "fa-bolt", color: "text-arcade-green" },
+                { id: "experience", label: "03. ERROR LOG", icon: "fa-scroll", color: "text-arcade-cyan" },
+                { id: "minigame", label: "04. MINI GAME", icon: "fa-gamepad", color: "text-arcade-yellow" }
+            ],
+
+            skillsSection: {
+                title: "POWER-UPS & STATS (SKILLS)",
+                subtitle: "Tingkat penguasaan teknologi & keahlian sistem",
+
+                categories: [
+                    {
+                        categoryTitle: "CODING LANGUAGES I LOVE THE MOST",
+                        icon: "fa-code",
+                        titleColor: "text-arcade-yellow",
+
+                        skills: [
+                            { name: "NODE.JS", level: "100%", color: "bg-arcade-green", textColor: "text-arcade-green" },
+                            { name: "JAVASCRIPT", level: "85%", color: "bg-arcade-cyan", textColor: "text-arcade-cyan" },
+                            { name: "BASH", level: "35%", color: "bg-arcade-yellow", textColor: "text-arcade-yellow" },
+                            { name: "JAVA", level: "20%", color: "bg-arcade-amber", textColor: "text-arcade-amber" },
+                            { name: "PYTHON", level: "1%", color: "bg-red-600", textColor: "text-red-500" }
+                        ]
+                    },
+
+                    {
+                        categoryTitle: "SERVERS SOFTWARE",
+                        icon: "fa-server",
+                        titleColor: "text-arcade-cyan",
+
+                        skills: [
+                            { name: "LINUX UBUNTU", level: "99%", color: "bg-arcade-green", textColor: "text-arcade-green" },
+                            { name: "PTERODACTYL", level: "95%", color: "bg-arcade-green", textColor: "text-arcade-green" },
+                            { name: "MONGODB", level: "75%", color: "bg-arcade-cyan", textColor: "text-arcade-cyan" },
+                            { name: "MARIADB", level: "65%", color: "bg-arcade-cyan", textColor: "text-arcade-cyan" },
+                            { name: "DOCKER", level: "40%", color: "bg-arcade-yellow", textColor: "text-arcade-yellow" }
+                        ]
+                    }
+                ]
+            },
+
+            questLog: {
+                subtitle: "Riwayat error, eksperimen, dan milestone",
+                items: [
+                    {
+                        num: 1,
+                        tag: "ERR_LOG_1 • PRESENT",
+                        tagColor: "text-arcade-cyan border-arcade-cyan",
+                        borderColor: "hover:border-arcade-cyan",
+                        title: "Full-Stack Web Developer",
+                        subtitle: "Independent",
+                        description: "Pengembangan website berbasis Express JS."
+                    },
+                    {
+                        num: 2,
+                        tag: "ERR_LOG_2 • HOMELAB",
+                        tagColor: "text-arcade-yellow border-arcade-yellow",
+                        borderColor: "hover:border-arcade-yellow",
+                        title: "Home Lab System Architect",
+                        subtitle: "Personal Server",
+                        description: "Mengelola server rumahan dengan basis Proxmox."
+                    },
+                    {
+                        num: 3,
+                        tag: "ERR_LOG_3 • CLI",
+                        tagColor: "text-arcade-amber border-arcade-amber",
+                        borderColor: "hover:border-arcade-amber",
+                        title: "CLI Script",
+                        subtitle: "CLI Script Developer",
+                        description: "Mengembangkan aplikasi berbasis CLI."
+                    },
+                    {
+                        num: 4,
+                        tag: "ERR_LOG_4 • OWNER SERVER",
+                        tagColor: "text-arcade-green border-arcade-green",
+                        borderColor: "hover:border-arcade-green",
+                        title: "Owner Server Minecraft",
+                        subtitle: "Owner Server Minecraft",
+                        description: "Merancang server dan menghandle komunitas."
+                    },
+                    {
+                        num: 5,
+                        tag: "ERR_LOG_5 • DATABASE",
+                        tagColor: "text-arcade-cyan border-arcade-cyan",
+                        borderColor: "hover:border-arcade-cyan",
+                        title: "Database Engineer",
+                        subtitle: "Database Engineer For Local Network",
+                        description: "Menyusun database dan mengelola database berskala menengah."
+                    }
+                ]
+            },
+
+            contactSection: {
+                title: "INSERT COIN (CONTACT TERMINAL)",
+                subtitle: "Kirimkan pesan atau tawaran proyek langsung ke sistem saya",
+                btnText: "TRANSMIT MESSAGE (INSERT COIN)"
+            },
+
+            footer: {
+                copyright: "© 2026 RANGGA RIZKY SAPUTRA • ALL RIGHTS RESERVED"
+            }
+        };
+
+        function renderSiteFromConfig() {
+            document.getElementById('profileImg').src = SITE_CONFIG.profile.avatarUrl;
+            document.getElementById('playerName').textContent = SITE_CONFIG.profile.name;
+            document.getElementById('playerSubtitle').textContent = SITE_CONFIG.profile.subtitle;
+            document.getElementById('playerRoleBadge').textContent = SITE_CONFIG.profile.roleBadge;
+            document.getElementById('playerLevelBadge').textContent = SITE_CONFIG.profile.levelBadge;
+
+            const aboutContainer = document.getElementById('aboutMeText');
+            
+            // Bungkus teks ke dalam wrapper khusus animasi agar card utama tidak ikut tertarik/berubah ukuran secara kasar
+            aboutContainer.innerHTML = `
+                <div id="aboutTextWrapper" class="about-desc-wrapper">
+                    ${SITE_CONFIG.profile.aboutMeParagraphs.map(p => `<p>${p}</p>`).join('')}
+                </div>
+            `;
+
+            const textWrapper = document.getElementById('aboutTextWrapper');
+            
+            // Event klik dipasang pada card/teks agar responsif
+            aboutContainer.style.cursor = 'pointer';
+            aboutContainer.addEventListener('click', toggleAboutDescription);
+            
+            // Logika Animasi Toggle Buka-Tutup About Me yang Mulus
+            const hintText = document.getElementById('aboutToggleHint');
+            function toggleAboutDescription() {
+                const isCollapsed = aboutContainer.classList.contains('about-desc-collapsed');
+                if (isCollapsed) {
+                    aboutContainer.classList.remove('about-desc-collapsed');
+                    aboutContainer.classList.add('about-desc-expanded');
+                    hintText.textContent = "▲ KLIK TEKS UNTUK MENUTUP KEMBALI";
+                } else {
+                    aboutContainer.classList.remove('about-desc-expanded');
+                    aboutContainer.classList.add('about-desc-collapsed');
+                    hintText.textContent = "▼ KLIK TEKS UNTUK BACA SELENGKAPNYA";
+                }
+            }
+            aboutContainer.addEventListener('click', toggleAboutDescription);
+
+            const sidebarNav = document.getElementById('sidebarNav');
+            sidebarNav.innerHTML = SITE_CONFIG.sidebarNav.map(item => `
+                <a href="#${item.id}" class="nav-link block p-3 rounded-lg bg-white/5 border border-white/10 hover:border-arcade-yellow text-white transition flex items-center justify-between group cursor-pointer">
+                    <span class="group-hover:text-arcade-yellow flex items-center gap-3">
+                        <i class="fa-solid ${item.icon} ${item.color}"></i>
+                        ${item.label}
+                    </span>
+                    <i class="fa-solid fa-chevron-right text-gray-500 group-hover:text-arcade-yellow"></i>
+                </a>
+            `).join('');
+
+            document.getElementById('skillsDesc').textContent = SITE_CONFIG.skillsSection.subtitle;
+            const skillsContainer = document.getElementById('skillsContainer');
+            
+            // Render Skills dengan animasi AOS dinamis (Kolom Kiri: fade-right, Kolom Kanan: fade-left)
+            skillsContainer.innerHTML = SITE_CONFIG.skillsSection.categories.map((cat, catIdx) => {
+                const aosEffect = catIdx % 2 === 0 ? 'fade-right' : 'fade-left';
+                return `
+                <div class="glass-card-grey p-6 rounded-2xl space-y-4" data-aos="${aosEffect}">
+                    <h3 class="font-pixel text-xs ${cat.titleColor} flex items-center gap-2">
+                        <i class="fa-solid ${cat.icon}"></i>
+                        ${cat.categoryTitle}
+                    </h3>
+                    ${cat.skills.map(sk => `
+                        <div class="space-y-1.5">
+                            <div class="flex justify-between font-pixel text-[10px] text-gray-300">
+                                <span>${sk.name}</span>
+                                <span class="${sk.textColor}">LVL ${sk.level}</span>
+                            </div>
+                            <div class="w-full bg-black/60 rounded-full h-3 border border-white/10 overflow-hidden p-0.5">
+                                <div class="${sk.color} h-full rounded-full shadow-lg" style="width: ${sk.level}"></div>
+                            </div>
+                        </div>
+                    `).join('')}
+                </div>
+            `;
+            }).join('');
+
+            document.getElementById('questLogSubtitle').textContent = SITE_CONFIG.questLog.subtitle;
+            const questContainer = document.getElementById('questLogContainer');
+            
+            // Render Error Log (Experience) dengan AOS Dinamis (Ganjil: fade-right, Genap: fade-left)
+            questContainer.innerHTML = SITE_CONFIG.questLog.items.map((q, idx) => {
+                const isReverse = idx % 2 !== 0;
+                // Jika ganjil (posisi kiri grid/layout), arah masuk dari kanan atau sebaliknya sesuai permintaan (Dominan kanan -> fade-left, Kiri -> fade-right)
+                const aosDirection = isReverse ? 'fade-left' : 'fade-right';
+
+                return `
+                <div class="relative flex flex-col ${isReverse ? 'md:flex-row-reverse' : 'md:flex-row'} items-center justify-between group" data-aos="${aosDirection}">
+                    <div class="w-full md:w-[45%] glass-card-grey p-5 rounded-2xl quest_div">
+                        <span class="font-pixel text-[9px] ${q.tagColor} bg-black/60 px-2 py-1 rounded border">
+                            ${q.tag}
+                        </span>
+                        <h3 class="font-pixel text-sm text-white mt-2">${q.title}</h3>
+                        <p class="text-xs text-arcade-yellow font-terminal text-base">${q.subtitle}</p>
+                        <p class="text-xs text-gray-300 mt-2">${q.description}</p>
+                    </div>
+                    <div class="absolute left-4 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full glass-card-yellow border border-arcade-yellow flex items-center justify-center font-pixel text-xs text-arcade-yellow my-4 md:my-0">
+                        ${q.num}
+                    </div>
+                    <div class="hidden md:block w-[45%]"></div>
+                </div>
+                `;
+            }).join('');
+
+            document.getElementById('contactDesc').textContent = SITE_CONFIG.contactSection.subtitle;
+        }
+
+        renderSiteFromConfig();
+
+        const sidebar = document.getElementById('arcadeSidebar');
+        const sidebarPanel = document.getElementById('sidebarPanel');
+        const sidebarToggleBtn = document.getElementById('sidebarToggleBtn');
+        const sidebarCloseBtn = document.getElementById('sidebarCloseBtn');
+        const sidebarBackdrop = document.getElementById('sidebarBackdrop');
+
+        function openSidebar() {
+            sidebar.classList.remove('sidebar-closed', 'pointer-events-none');
+            sidebarPanel.classList.remove('pointer-events-none');
+            sidebarBackdrop.classList.remove('pointer-events-none', 'opacity-0');
+            sidebarBackdrop.classList.add('opacity-100');
+            playRetroBeep(440, 0.1);
+        }
+
+        function closeSidebar() {
+            sidebar.classList.add('sidebar-closed');
+            sidebarBackdrop.classList.remove('opacity-100');
+            sidebarBackdrop.classList.add('opacity-0');
+            setTimeout(() => {
+                sidebar.classList.add('pointer-events-none');
+            }, 400);
+            playRetroBeep(330, 0.1);
+        }
+
+        sidebarToggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (sidebar.classList.contains('sidebar-closed')) openSidebar();
+            else closeSidebar();
+        });
+
+        sidebarCloseBtn.addEventListener('click', closeSidebar);
+        sidebarBackdrop.addEventListener('click', closeSidebar);
+
+        const typingElement = document.getElementById('typingText');
+        const phrases = SITE_CONFIG.profile.typingPhrases;
+        let phraseIdx = 0, charIdx = 0, isDeleting = false;
+
+        function typeLoop() {
+            const currentPhrase = phrases[phraseIdx];
+            if (isDeleting) {
+                typingElement.textContent = currentPhrase.substring(0, charIdx - 1);
+                charIdx--;
+            } else {
+                typingElement.textContent = currentPhrase.substring(0, charIdx + 1);
+                charIdx++;
+            }
+            let typeSpeed = isDeleting ? 30 : 60;
+            if (!isDeleting && charIdx === currentPhrase.length) {
+                typeSpeed = 2000;
+                isDeleting = true;
+            } else if (isDeleting && charIdx === 0) {
+                isDeleting = false;
+                phraseIdx = (phraseIdx + 1) % phrases.length;
+                typeSpeed = 500;
+            }
+            setTimeout(typeLoop, typeSpeed);
+        }
+        typeLoop();
+
+        let audioCtx = null, audioMuted = true;
+        const toggleAudioBtn = document.getElementById('toggleAudioBtn');
+        const audioStatus = document.getElementById('audioStatus');
+        const audioIcon = document.getElementById('audioIcon');
+
+        function initAudio() {
+            if (!audioCtx) audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        }
+
+        function playRetroBeep(freq, duration) {
+            if (audioMuted) return;
+            try {
+                initAudio();
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+                osc.type = 'square';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+                gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {}
+        }
+
+        toggleAudioBtn.addEventListener('click', () => {
+            audioMuted = !audioMuted;
+            if (!audioMuted) {
+                initAudio();
+                audioStatus.textContent = "ENABLED";
+                audioStatus.className = "text-arcade-green";
+                audioIcon.className = "fa-solid fa-volume-high";
+                playRetroBeep(600, 0.1);
+            } else {
+                audioStatus.textContent = "MUTED";
+                audioStatus.className = "text-arcade-yellow";
+                audioIcon.className = "fa-solid fa-volume-xmark";
+            }
+        });
+
+        // MINI GAME CANVAS
+        const canvas = document.getElementById('spaceGameCanvas');
+        const ctx = canvas.getContext('2d');
+        const startOverlay = document.getElementById('gameStartOverlay');
+        const startGameBtn = document.getElementById('startGameBtn');
+        const gameHighScoreEl = document.getElementById('gameHighScore');
+
+        let animationFrameId, gameRunning = false, score = 0, highScore = 0, lastShotTime = 0;
+
+        function resizeCanvas() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const playerShip = { x: canvas.width / 2, y: canvas.height - 40, width: 32, height: 32, speed: 8, vx: 0, vy: 0 };
+        let playerBullets = [], alienEnemies = [], explosions = [];
+
+        function spawnAlien() {
+            if (alienEnemies.length >= 7) return;
+            const size = Math.random() * 12 + 24;
+            const speedFactor = 1 + Math.min(score / 4000, 1.5);
+            alienEnemies.push({
+                x: Math.random() * (canvas.width - size),
+                y: -size, width: size, height: size,
+                speed: (Math.random() * 1.0 + 1.0) * speedFactor,
+                hp: score > 3000 && Math.random() > 0.7 ? 2 : 1,
+                color: score > 3000 ? '#ff9900' : '#ffe600'
+            });
+        }
+
+        function resetGame() {
+            score = 0; playerBullets = []; alienEnemies = []; explosions = [];
+            playerShip.x = canvas.width / 2 - 16; playerShip.y = canvas.height - 50;
+            playerShip.vx = 0; playerShip.vy = 0; lastShotTime = Date.now();
+        }
+
+        function handleAutoShoot() {
+            const now = Date.now();
+            if (now - lastShotTime >= 100) {
+                lastShotTime = now;
+                playerBullets.push({ x: playerShip.x + 4, y: playerShip.y, width: 4, height: 12, speed: 8 });
+                playerBullets.push({ x: playerShip.x + playerShip.width - 8, y: playerShip.y, width: 4, height: 12, speed: 8 });
+                playRetroBeep(750, 0.04);
+            }
+        }
+
+        function updateGame() {
+            if (!gameRunning) return;
+            handleAutoShoot();
+            playerShip.x += playerShip.vx; playerShip.y += playerShip.vy;
+
+            if (playerShip.x < 0) playerShip.x = 0;
+            if (playerShip.x + playerShip.width > canvas.width) playerShip.x = canvas.width - playerShip.width;
+            if (playerShip.y < 0) playerShip.y = 0;
+            if (playerShip.y + playerShip.height > canvas.height) playerShip.y = canvas.height - playerShip.height;
+
+            playerBullets.forEach((b, i) => {
+                b.y -= b.speed;
+                if (b.y < -20) playerBullets.splice(i, 1);
+            });
+
+            if (Math.random() < 0.012 + Math.min(score / 40000, 0.02)) spawnAlien();
+
+            alienEnemies.forEach((alien, aIdx) => {
+                alien.y += alien.speed;
+                playerBullets.forEach((bullet, bIdx) => {
+                    if (bullet.x < alien.x + alien.width && bullet.x + bullet.width > alien.x &&
+                        bullet.y < alien.y + alien.height && bullet.y + bullet.height > alien.y) {
+                        alien.hp -= 1;
+                        playerBullets.splice(bIdx, 1);
+                        if (alien.hp <= 0) {
+                            explosions.push({ x: alien.x + alien.width / 2, y: alien.y + alien.height / 2, radius: 1, maxRadius: 16 });
+                            alienEnemies.splice(aIdx, 1);
+                            score += 150;
+                            playRetroBeep(900, 0.06);
+                        }
+                    }
+                });
+
+                if (alien.y + alien.height > canvas.height ||
+                    (playerShip.x < alien.x + alien.width && playerShip.x + playerShip.width > alien.x &&
+                     playerShip.y < alien.y + alien.height && playerShip.y + playerShip.height > alien.y)) {
+                    gameOver();
+                }
+            });
+
+            explosions.forEach((exp, i) => {
+                exp.radius += 2;
+                if (exp.radius > exp.maxRadius) explosions.splice(i, 1);
+            });
+
+            drawGame();
+            animationFrameId = requestAnimationFrame(updateGame);
+        }
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = '#ffffff';
+            for (let i = 0; i < 20; i++) {
+                ctx.fillRect((i * 43) % canvas.width, (i * 71 + Date.now() * 0.08) % canvas.height, 2, 2);
+            }
+
+            ctx.fillStyle = '#ffe600';
+            ctx.beginPath();
+            ctx.moveTo(playerShip.x + playerShip.width / 2, playerShip.y);
+            ctx.lineTo(playerShip.x + playerShip.width, playerShip.y + playerShip.height);
+            ctx.lineTo(playerShip.x + playerShip.width / 2, playerShip.y + playerShip.height - 6);
+            ctx.lineTo(playerShip.x, playerShip.y + playerShip.height);
+            ctx.closePath();
+            ctx.fill();
+
+            ctx.fillStyle = '#00f3ff';
+            ctx.fillRect(playerShip.x + playerShip.width / 2 - 3, playerShip.y + playerShip.height - 4, 6, 8 + Math.random() * 4);
+
+            ctx.fillStyle = '#39ff14';
+            playerBullets.forEach(b => ctx.fillRect(b.x, b.y, b.width, b.height));
+
+            alienEnemies.forEach(alien => {
+                ctx.fillStyle = alien.color;
+                ctx.beginPath();
+                ctx.arc(alien.x + alien.width / 2, alien.y + alien.height / 3, alien.width / 2, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(alien.x + 6, alien.y + 6, 4, 4);
+                ctx.fillRect(alien.x + alien.width - 10, alien.y + 6, 4, 4);
+            });
+
+            explosions.forEach(exp => {
+                ctx.strokeStyle = '#ff9900';
+                ctx.lineWidth = 2;
+                ctx.beginPath();
+                ctx.arc(exp.x, exp.y, exp.radius, 0, Math.PI * 2);
+                ctx.stroke();
+            });
+
+            ctx.font = '10px "Press Start 2P"';
+            ctx.fillStyle = '#39ff14';
+            ctx.fillText(`ALIENS DESTROYED: ${Math.floor(score / 150)}`, 10, 25);
+            ctx.fillText(`SCORE: ${score}`, 10, 42);
+        }
+
+        function gameOver() {
+            gameRunning = false;
+            cancelAnimationFrame(animationFrameId);
+            if (score > highScore) { 
+                highScore = score; 
+                gameHighScoreEl.textContent = highScore; 
+                localStorage.setItem("highScore", highScore);
+            }
+            startOverlay.classList.remove('hidden');
+            document.getElementById('overlayTitle').textContent = "GAME OVER";
+            document.getElementById('overlaySubtitle').textContent = `FINAL SCORE: ${score} (${Math.floor(score / 150)} Aliens Kills)`;
+            playRetroBeep(150, 0.4);
+        }
+
+        function startGame() {
+            resizeCanvas(); resetGame(); gameRunning = true;
+            startOverlay.classList.add('hidden'); updateGame();
+        }
+        startGameBtn.addEventListener('click', startGame);
+
+        // ANALOG JOYSTICK
+        const joystickBase = document.getElementById('joystickBase');
+        const joystickStick = document.getElementById('joystickStick');
+        let isJoystickDragging = false, activePointerId = null, maxStickDistance = 30;
+
+        function handleJoystickMove(clientX, clientY) {
+            const rect = joystickBase.getBoundingClientRect();
+            let deltaX = clientX - (rect.left + rect.width / 2);
+            let deltaY = clientY - (rect.top + rect.height / 2);
+            const distance = Math.hypot(deltaX, deltaY);
+
+            if (distance > maxStickDistance) {
+                deltaX = (deltaX / distance) * maxStickDistance;
+                deltaY = (deltaY / distance) * maxStickDistance;
+            }
+            joystickStick.style.transform = `translate(${deltaX}px, ${deltaY}px)`;
+            playerShip.vx = (deltaX / maxStickDistance) * playerShip.speed;
+            playerShip.vy = (deltaY / maxStickDistance) * playerShip.speed;
+        }
+
+        function resetJoystick() {
+            if (!isJoystickDragging) return;
+            isJoystickDragging = false; activePointerId = null;
+            joystickStick.style.transform = `translate(0px, 0px)`;
+            playerShip.vx = 0; playerShip.vy = 0;
+        }
+
+        joystickBase.addEventListener('pointerdown', (e) => {
+            isJoystickDragging = true; activePointerId = e.pointerId;
+            try { joystickBase.setPointerCapture(e.pointerId); } catch (err) {}
+            handleJoystickMove(e.clientX, e.clientY);
+        });
+
+        window.addEventListener('pointermove', (e) => {
+            if (isJoystickDragging && (activePointerId === null || e.pointerId === activePointerId)) {
+                handleJoystickMove(e.clientX, e.clientY);
+            }
+        });
+
+        window.addEventListener('pointerup', resetJoystick);
+        window.addEventListener('pointercancel', resetJoystick);
+
+        // KEYBOARD
+        const keysHeld = {};
+        window.addEventListener('keydown', (e) => { keysHeld[e.key] = true; updateKeyboardVelocity(); });
+        window.addEventListener('keyup', (e) => { keysHeld[e.key] = false; updateKeyboardVelocity(); });
+
+        function updateKeyboardVelocity() {
+            if (isJoystickDragging) return;
+            playerShip.vx = 0; playerShip.vy = 0;
+            if (keysHeld['ArrowLeft'] || keysHeld['a'] || keysHeld['A']) playerShip.vx = -playerShip.speed;
+            if (keysHeld['ArrowRight'] || keysHeld['d'] || keysHeld['D']) playerShip.vx = playerShip.speed;
+            if (keysHeld['ArrowUp'] || keysHeld['w'] || keysHeld['W']) playerShip.vy = -playerShip.speed;
+            if (keysHeld['ArrowDown'] || keysHeld['s'] || keysHeld['S']) playerShip.vy = playerShip.speed;
+        }
+
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            let username = document.getElementById("username").value;
+            let email = document.getElementById("email").value;
+            let message = document.getElementById("message").value;
+            let json = {
+                "username": username,
+                "email": email,
+                "message": message
+            };
+            e.preventDefault()
+            await fetch('/send', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(json)
+            })
+            .then(response => {
+                if(!response.ok){
+                    let timerInterval;
+                    Swal.mixin({
+                        toast: true,
+                        position: "top-end",
+                        showConfirmButton: false,
+                        timer: 3000,
+                        timerProgressBar: true,
+                        theme: "dark",
+                        didOpen: (toast) => {
+                            toast.onmouseenter = Swal.stopTimer;
+                            toast.onmouseleave = Swal.resumeTimer;
+                    }
+                    }).fire({
+                        icon: "error",
+                        title: "Pesan gagal dikirim."
+                    });
+                    throw new Error(response);
+                }
+                response.json()
+                let timerInterval;
+                Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    theme: "dark",
+                    didOpen: (toast) => {
+                        toast.onmouseenter = Swal.stopTimer;
+                        toast.onmouseleave = Swal.resumeTimer;
+                }
+                }).fire({
+                    icon: "success",
+                    title: "Pesan telah terkirim, Terimakasih!"
+                });
+            })
+            .then(data => {
+                console.log('Berhasil:', data);
+            })
+            .catch(error => {
+                console.log('Gagal:', error);
+            });
+            playRetroBeep(880, 0.15);
+        });
+
+        document.addEventListener('click', function(e) {
+            // Cari apakah yang diklik adalah link dengan class 'link-delayed'
+            const targetLink = e.target.closest('.link-delayed');
+            
+            if (targetLink) {
+                e.preventDefault(); // Mencegah pindah halaman langsung
+                
+                const destination = targetLink.href;
+
+                // Delay selama 300ms (0.3 detik)
+                setTimeout(() => {
+                    window.location.href = destination;
+                }, 300);
+            }
+        });
+
+        window.onload = function() { 
+            drawGame(); 
+            AOS.refresh(); 
+        };
+    </script>
+</body>
+</html>
